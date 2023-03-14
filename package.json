@@ -1,0 +1,29 @@
+{
+  "name": "@equinor/collibra-sdk",
+  "version": "1.0.0-alpha.1",
+  "description": "A simple wrapper around the Collibra REST API",
+<<<<<<< HEAD
+  "main": "dist/index.js",
+=======
+  "main": "index.js",
+>>>>>>> 3d31f73 (1.0.0-alpha.1)
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+<<<<<<< HEAD
+  "devDependencies": {
+    "@types/node": "^18.15.3",
+    "@typescript-eslint/eslint-plugin": "^5.55.0",
+    "@typescript-eslint/parser": "^5.55.0",
+    "eslint": "^8.36.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-prettier": "^4.2.1",
+    "prettier": "^2.8.4",
+    "typescript": "^4.9.5"
+  }
+=======
+  "license": "ISC"
+>>>>>>> 3d31f73 (1.0.0-alpha.1)
+}
