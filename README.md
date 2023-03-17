@@ -1,1 +1,1 @@
-# Data-Marketplace-Collibra-SDK
+# data-marketplace-collibra-sdk
