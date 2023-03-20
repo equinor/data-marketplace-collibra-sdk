@@ -1,0 +1,36 @@
+name: Publish to NPM
+on: workflow_dispatch
+
+env:
+  SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+jobs:
+  setup:
+    uses: equinor/data-marketplace-collibra-sdk/.github/workflows/_setup.yml@main
+    with:
+      registry-url: 'https://registry.npmjs.org'
+      cache-key: ${{ github.sha }}
+
+  publish:
+    name: Publish
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get files
+        id: get-files
+        uses: actions/cache@v3
+        with:
+          path: |
+            ./*
+            .npm
+          key: ${{ github.sha }}
+      - id: publish
+        run: |
+          npm config set '//registry.npmjs.org/:_authToken' ${{ secrets.NPM_TOKEN }}
+          npm publish --access public
+      - name: Log errors to Slack
+        uses: act10ns/slack@v1
+        with:
+          status: ${{ job.status }}
+          steps: ${{ toJson(steps) }}
+        if: failure()

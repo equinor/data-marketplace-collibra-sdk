@@ -1,0 +1,65 @@
+name: Validate code
+on:
+  push:
+    branches: [main]
+    paths:
+      - '**.{j,t}s'
+  pull_request:
+    branches: [main]
+    paths:
+      - '**.{j,t}s'
+
+env:
+  SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+jobs:
+  setup:
+    uses: equinor/data-marketplace-collibra-sdk/.github/workflows/_setup.yml@main
+    with:
+      cache-key: ${{ github.sha }}
+
+  lint:
+    name: Lint
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get files
+        id: get-files
+        uses: actions/cache@v3
+        with:
+          path: |
+            ./*
+            .npm
+          key: ${{ github.sha }}
+      - name: Run lint
+        id: lint
+        run: npm run lint
+      - name: Log errors to Slack
+        uses: act10ns/slack@v1
+        with:
+          status: ${{ job.status }}
+          steps: ${{ toJson(steps) }}
+        if: failure()
+
+  test:
+    name: Test
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get files
+        id: get-files
+        uses: actions/cache@v3
+        with:
+          path: |
+            ./*
+            .npm
+          key: ${{ github.sha }}
+      - name: Build without emit
+        id: test-build
+        run: npm test
+      - name: Log errors to Slack
+        uses: act10ns/slack@v1
+        with:
+          status: ${{ job.status }}
+          steps: ${{ toJson(steps) }}
+        if: failure()

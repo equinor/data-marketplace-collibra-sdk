@@ -1,0 +1,50 @@
+name: _Setup
+on:
+  workflow_call:
+    inputs:
+      registry-url:
+        required: false
+        type: string
+      cache-key:
+        required: true
+        type: string
+
+env:
+  SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+jobs:
+  setup:
+    name: Checkout and setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v3
+      - name: Setup Node
+        id: setup-node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: 'npm'
+          registry-url: ${{ inputs.registry-url }}
+      - name: Node version
+        run: node --version
+      - name: NPM version
+        run: npm --version
+      - name: Install dependencies
+        id: install-dependencies
+        run: npm ci
+      - name: Cache files
+        id: cache-files
+        uses: actions/cache@v3
+        with:
+          path: |
+            ./*
+            .npm
+          key: ${{ inputs.cache-key }}
+      - name: Log errors to Slack
+        uses: act10ns/slack@v1
+        with:
+          status: ${{ job.status }}
+          steps: ${{ toJson(steps) }}
+          if: failure()
